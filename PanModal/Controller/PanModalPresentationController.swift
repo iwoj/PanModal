@@ -111,6 +111,9 @@ open class PanModalPresentationController: UIPresentationController {
         } else {
             view = DimmedView()
         }
+        if let interactionEnabled = presentable?.isBackgroundUserInteractionEnabled {
+            view.isUserInteractionEnabled = interactionEnabled
+        }
         view.didTap = { [weak self] _ in
             if self?.presentable?.allowsTapToDismiss == true {
                 self?.presentedViewController.dismiss(animated: true)
@@ -126,7 +129,11 @@ open class PanModalPresentationController: UIPresentationController {
      */
     private lazy var panContainerView: PanContainerView = {
         let frame = containerView?.frame ?? .zero
-        return PanContainerView(presentedView: presentedViewController.view, frame: frame)
+        let pcView = PanContainerView(presentedView: presentedViewController.view, frame: frame)
+        if let interactionEnabled = presentable?.isUserInteractionEnabled {
+            pcView.isUserInteractionEnabled = interactionEnabled
+        }
+        return pcView
     }()
 
     /**
@@ -177,7 +184,7 @@ open class PanModalPresentationController: UIPresentationController {
         guard let containerView = containerView
             else { return }
 
-        layoutBackgroundView(in: containerView)
+        /* layoutBackgroundView(in: containerView) */
         layoutPresentedView(in: containerView)
         configureScrollViewInsets()
 
